@@ -147,7 +147,12 @@ public class SubWindow extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jMenuItem1ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        // TODO add your handling code here:
+        new Thread() {
+            @Override
+            public void run() {
+                ContextkMenu.addWindowsContextkMenuMenu();
+            }
+        }.start();
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     /**
@@ -161,11 +166,11 @@ public class SubWindow extends javax.swing.JFrame {
          */
         try {
             /*for (javax.swing.UIManager.LookAndFeelInfo info : javax.swing.UIManager.getInstalledLookAndFeels()) {
-                if ("Nimbus".equals(info.getName())) {
-                    javax.swing.UIManager.setLookAndFeel(info.getClassName());
-                    break;
-                }
-            }*/
+             if ("Nimbus".equals(info.getName())) {
+             javax.swing.UIManager.setLookAndFeel(info.getClassName());
+             break;
+             }
+             }*/
             javax.swing.UIManager.setLookAndFeel(javax.swing.UIManager.getSystemLookAndFeelClassName());
         } catch (ClassNotFoundException ex) {
             java.util.logging.Logger.getLogger(SubWindow.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
