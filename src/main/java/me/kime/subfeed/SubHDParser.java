@@ -30,7 +30,25 @@ import org.jsoup.select.Elements;
  */
 public class SubHDParser {
 
-    public static Elements Search(String mediaName) {
+    public static void parse(String mediaName) {
+        Elements entries = SubHDParser.search(mediaName);
+        if (entries == null || entries.size() == 0) {
+            Select1.addItem(new Feed("Not Found", "", "", "", "", ""));
+        } else {
+            for (Element entry : entries) {
+                String title = SubHDParser.parseTitle(entry);
+                String sid = SubHDParser.parseSubId(entry);
+                String description = SubHDParser.parseDescription(entry);
+                String language = SubHDParser.parseLanguage(entry);
+                String group = SubHDParser.parseGroup(entry);
+                String downloadCount = SubHDParser.parseDownloadCount(entry);
+                System.out.println(title + " " + sid + " " + description + " " + language + " " + group + " " + downloadCount);
+                Select1.addItem(new Feed(title, sid, description, language, group, downloadCount));
+            }
+        }
+    }
+
+    public static Elements search(String mediaName) {
         try {
             mediaName = StringUtils.replaceEach(mediaName,
                     new String[]{"&", "'", "[", "]"},

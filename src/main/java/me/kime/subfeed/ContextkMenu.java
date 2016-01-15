@@ -15,10 +15,8 @@
  */
 package me.kime.subfeed;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.lang.ProcessBuilder.Redirect;
 import java.net.URISyntaxException;
@@ -33,6 +31,7 @@ public class ContextkMenu {
 
     public static void addWindowsContextkMenuMenu() {
         try {
+            //using java instead of javaw for debuging
             String javaPath = System.getProperty("java.home") + File.separator + "bin" + File.separator + "java";
 
             String appPath = new File(ContextkMenu.class.getProtectionDomain().getCodeSource().getLocation().toURI().getPath()).getAbsolutePath();
@@ -83,6 +82,8 @@ public class ContextkMenu {
             Logger.getLogger(ContextkMenu.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    
 
     public static void removeRightClickMenu() {
 

@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.io.File;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -19,8 +20,6 @@ import javax.swing.JTextField;
 import javax.swing.LayoutStyle;
 import javax.swing.ScrollPaneConstants;
 import javax.swing.WindowConstants;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 /**
  *
@@ -59,6 +58,7 @@ public class SubWindow extends javax.swing.JFrame {
         JButton jButton1 = new JButton();
         JMenuBar jMenuBar1 = new JMenuBar();
         JMenu jMenu1 = new JMenu();
+        JMenuItem jMenuItem2 = new JMenuItem();
         JMenu jMenu2 = new JMenu();
         JMenuItem jMenuItem1 = new JMenuItem();
 
@@ -78,6 +78,15 @@ public class SubWindow extends javax.swing.JFrame {
         });
 
         jMenu1.setText("File");
+
+        jMenuItem2.setText("Add File");
+        jMenuItem2.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent evt) {
+                jMenuItem2ActionPerformed(evt);
+            }
+        });
+        jMenu1.add(jMenuItem2);
+
         jMenuBar1.add(jMenu1);
 
         jMenu2.setText("Options");
@@ -125,25 +134,17 @@ public class SubWindow extends javax.swing.JFrame {
     private void jButton1ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         searchText = jTextField1.getText();
         Select1.clearItems();
-        setPane(new Select1());
 
-        Elements entries = SubHDParser.Search(searchText);
+        new Thread() {
+            @Override
+            public void run() {
+                System.out.println("Test");
 
-        if (entries == null || entries.size() == 0) {
-            Select1.addItem(new Feed("Not Found", "", "", "", "", ""));
-        } else {
-            for (Element entry : entries) {
-                String title = SubHDParser.parseTitle(entry);
-                String sid = SubHDParser.parseSubId(entry);
-                String description = SubHDParser.parseDescription(entry);
-                String language = SubHDParser.parseLanguage(entry);
-                String group = SubHDParser.parseGroup(entry);
-                String downloadCount = SubHDParser.parseDownloadCount(entry);
-                System.out.println(title + " " + sid + " " + description + " " + language + " " + group + " " + downloadCount);
-                Select1.addItem(new Feed(title, sid, description, language, group, downloadCount));
+                SubHDParser.parse(searchText);
 
             }
-        }
+        }.start();
+
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jMenuItem1ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
@@ -151,9 +152,41 @@ public class SubWindow extends javax.swing.JFrame {
             @Override
             public void run() {
                 ContextkMenu.addWindowsContextkMenuMenu();
+                
             }
         }.start();
     }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void jMenuItem2ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+        JFileChooser fileChooser = new JFileChooser(Preference.getLastUsedDir());
+        int result = fileChooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            File mediaFile = fileChooser.getSelectedFile();
+            Preference.setLastUsedDir(mediaFile.getParent());
+            
+            System.out.println("Selected file: " + mediaFile.getAbsolutePath());
+
+            int pos = mediaFile.getName().lastIndexOf(".");
+            if (pos > 0) {
+                mediaName = mediaFile.getName().substring(0, pos);
+                searchText = mediaName;
+                jTextField1.setText(searchText);
+            }
+
+            path = mediaFile.getParent();
+
+            Select1.clearItems();
+            new Thread() {
+                @Override
+                public void run() {
+                    System.out.println("Test");
+
+                    SubHDParser.parse(searchText);
+
+                }
+            }.start();
+        }
+    }//GEN-LAST:event_jMenuItem2ActionPerformed
 
     /**
      * @param args the command line arguments
@@ -184,52 +217,37 @@ public class SubWindow extends javax.swing.JFrame {
         //</editor-fold>
         /* Create and display the form */
 
-        if (args.length < 1) {
-            System.out.println("Missing input parameter");
-            return;
+        if (args.length == 1) {
+
+            File mediaFile = new File(args[0]);
+
+            int pos = mediaFile.getName().lastIndexOf(".");
+            if (pos > 0) {
+                mediaName = mediaFile.getName().substring(0, pos);
+                searchText = mediaName;
+            }
+
+            path = mediaFile.getParent();
+
+            System.out.println(args[0]);
+            System.out.println(mediaFile.getParent());
+            System.out.println(mediaFile.getName());
+
+            new Thread() {
+                @Override
+                public void run() {
+                    System.out.println("Test");
+
+                    SubHDParser.parse(searchText);
+
+                }
+            }.start();
         }
-        File mediaFile = new File(args[0]);
-
-        int pos = mediaFile.getName().lastIndexOf(".");
-        if (pos > 0) {
-            mediaName = mediaFile.getName().substring(0, pos);
-            searchText = mediaName;
-        }
-
-        path = mediaFile.getParent();
-
-        System.out.println(args[0]);
-        System.out.println(mediaFile.getParent());
-        System.out.println(mediaFile.getName());
-
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
                 new SubWindow().setVisible(true);
 
-                new Thread() {
-                    @Override
-                    public void run() {
-                        System.out.println("Test");
-
-                        Elements entries = SubHDParser.Search(searchText);
-                        if (entries == null || entries.size() == 0) {
-                            Select1.addItem(new Feed("Not Found", "", "", "", "", ""));
-                        } else {
-                            for (Element entry : entries) {
-                                String title = SubHDParser.parseTitle(entry);
-                                String sid = SubHDParser.parseSubId(entry);
-                                String description = SubHDParser.parseDescription(entry);
-                                String language = SubHDParser.parseLanguage(entry);
-                                String group = SubHDParser.parseGroup(entry);
-                                String downloadCount = SubHDParser.parseDownloadCount(entry);
-                                System.out.println(title + " " + sid + " " + description + " " + language + " " + group + " " + downloadCount);
-                                Select1.addItem(new Feed(title, sid, description, language, group, downloadCount));
-                            }
-                        }
-
-                    }
-                }.start();
             }
 
         });
