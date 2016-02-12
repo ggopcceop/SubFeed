@@ -154,6 +154,7 @@ public class SubWindow extends javax.swing.JFrame {
     private void jButton1ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
         searchText = jTextField1.getText();
         Select1.clearItems();
+        setPane(new Select1());
 
         new Thread() {
             @Override
