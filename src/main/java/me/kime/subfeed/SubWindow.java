@@ -1,13 +1,32 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
+/* 
+ * The MIT License
+ *
+ * Copyright 2016 Kime.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
  */
 package me.kime.subfeed;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.util.ResourceBundle;
 import javax.swing.GroupLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -69,17 +88,18 @@ public class SubWindow extends javax.swing.JFrame {
 
         jTextField1.setText(searchText);
 
-        jButton1.setText("Search");
-        jButton1.setToolTipText("");
+        ResourceBundle bundle = ResourceBundle.getBundle("me/kime/subfeed/Bundle"); // NOI18N
+        jButton1.setText(bundle.getString("SubWindow.jButton1.text")); // NOI18N
+        jButton1.setToolTipText(bundle.getString("SubWindow.jButton1.toolTipText")); // NOI18N
         jButton1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 jButton1ActionPerformed(evt);
             }
         });
 
-        jMenu1.setText("File");
+        jMenu1.setText(bundle.getString("SubWindow.jMenu1.text")); // NOI18N
 
-        jMenuItem2.setText("Add File");
+        jMenuItem2.setText(bundle.getString("SubWindow.jMenuItem2.text")); // NOI18N
         jMenuItem2.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 jMenuItem2ActionPerformed(evt);
@@ -89,9 +109,9 @@ public class SubWindow extends javax.swing.JFrame {
 
         jMenuBar1.add(jMenu1);
 
-        jMenu2.setText("Options");
+        jMenu2.setText(bundle.getString("SubWindow.jMenu2.text")); // NOI18N
 
-        jMenuItem1.setText("Register Right Click Menu");
+        jMenuItem1.setText(bundle.getString("SubWindow.jMenuItem1.text")); // NOI18N
         jMenuItem1.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent evt) {
                 jMenuItem1ActionPerformed(evt);
