@@ -40,7 +40,7 @@ public class SubHDParser {
 
     public static void parse(String mediaName) {
         Elements entries = SubHDParser.search(mediaName);
-        if (entries == null || entries.size() == 0) {
+        if (entries == null || entries.isEmpty()) {
             Select1.addItem(new Feed("Not Found", "", "", "", "", ""));
         } else {
             for (Element entry : entries) {
