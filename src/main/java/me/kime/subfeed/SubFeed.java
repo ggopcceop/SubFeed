@@ -136,6 +136,8 @@ public class SubFeed {
 
             JSONObject json = (JSONObject) JSONValue.parse(textBuilder.toString());
             String downloadURL = (String) json.get("url");
+            
+            conn.disconnect();
             return downloadURL;
         } catch (IOException ex) {
             Logger.getLogger(SubFeed.class.getName()).log(Level.SEVERE, null, ex);
@@ -174,7 +176,7 @@ public class SubFeed {
 
                 }
             }
-
+            
         } catch (IOException ex) {
             Logger.getLogger(SubFeed.class.getName()).log(Level.SEVERE, null, ex);
         }

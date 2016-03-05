@@ -25,6 +25,7 @@ package me.kime.subfeed;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -117,14 +118,21 @@ public class Select2 extends javax.swing.JPanel {
                         File file = new File(SubWindow.path + File.separator + newName);
 
                         System.out.println(file.getAbsoluteFile());
-
-                        ExtractOperationResult result = item.extractSlow(new RandomAccessFileOutStream(new RandomAccessFile(file, "rw")));
+                        
+                        RandomAccessFileOutStream fileStream = new RandomAccessFileOutStream(new RandomAccessFile(file, "rw"));
+                        
+                        //TODO handle extract result
+                        ExtractOperationResult result = item.extractSlow(fileStream);
+                        
+                        fileStream.close();
 
                         System.out.println(result.toString());
 
                     } catch (SevenZipException ex) {
                         Logger.getLogger(Select2.class.getName()).log(Level.SEVERE, null, ex);
                     } catch (FileNotFoundException ex) {
+                        Logger.getLogger(Select2.class.getName()).log(Level.SEVERE, null, ex);
+                    } catch (IOException ex) {
                         Logger.getLogger(Select2.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
