@@ -58,18 +58,18 @@ import net.sf.sevenzipjbinding.simple.ISimpleInArchiveItem;
  * @author Kime
  */
 public class SubtitlePaneController implements Initializable {
-    
+
     private final FileChooser fileChooser = new FileChooser();
-    
+
     @FXML
     private TextField saveNameField;
-    
+
     @FXML
     private Button saveButton;
-    
+
     @FXML
     private ListView<SubtitleNode> subtitleListView;
-    
+
     private ObservableList<SubtitleNode> subtitleList;
     private SubWindowController parent;
 
@@ -83,23 +83,21 @@ public class SubtitlePaneController implements Initializable {
     public void initialize(URL url, ResourceBundle rb) {
         subtitleList = FXCollections.observableList(new LinkedList());
         subtitleListView.setItems(subtitleList);
-        
+
         subtitleListView.setCellFactory(e -> {
             ListCell cell = new TextFieldListCell();
             cell.setOnMouseClicked(this::handleSubtitleClick);
             return cell;
         });
-        
-        fetchSubtitle();
     }
-    
+
     @FXML
     private void handleSaveButtonAction(ActionEvent event) {
         System.out.println("You clicked Save!");
         SubtitleNode node = (SubtitleNode) subtitleListView.getSelectionModel().getSelectedItem();
         saveSubtitle(node.item);
     }
-    
+
     private void handleSubtitleClick(MouseEvent event) {
         if (MouseButton.PRIMARY.equals(event.getButton())) {
             TextFieldListCell source = (TextFieldListCell) event.getSource();
@@ -115,13 +113,13 @@ public class SubtitlePaneController implements Initializable {
                 saveSubtitle(node.item);
             }
         }
-        
+
     }
-    
+
     public void setParentController(SubWindowController parent) {
         this.parent = parent;
     }
-    
+
     private void saveSubtitle(ISimpleInArchiveItem item) {
         String saveName = saveNameField.getText();
         String savePath = DataHolder.getPath();
@@ -132,45 +130,45 @@ public class SubtitlePaneController implements Initializable {
         } else {
             outFile = new File(savePath + File.separator + saveName);
         }
-        
+
         Task<Void> task = Util.task(() -> {
-            
+
             System.out.println(outFile.getAbsoluteFile());
-            
+
             RandomAccessFileOutStream fileStream = new RandomAccessFileOutStream(new RandomAccessFile(outFile, "rw"));
 
             //TODO handle extract result
             ExtractOperationResult result = item.extractSlow(fileStream);
-            
+
             fileStream.close();
-            
+
             System.out.println(result.toString());
-            
+
             return null;
         });
-        
+
         Util.start(task);
     }
-    
+
     public void fetchSubtitle() {
         subtitleList.clear();
         if (!"".equals(DataHolder.getDownloadId())) {
             parent.setProgress(-1d);
-            
+
             Task<List<ISimpleInArchiveItem>> task = Util.task(() -> {
                 String dlLink = SubHDParser.parseDownLink(DataHolder.getDownloadId());
                 return SubFeed.downloadSub(dlLink);
             });
-            
+
             task.setOnSucceeded(e -> {
                 List<ISimpleInArchiveItem> list = (List<ISimpleInArchiveItem>) e.getSource().getValue();
                 list.forEach((item) -> {
                     subtitleList.add(new SubtitleNode("", item));
                 });
-                
+
                 parent.setProgress(0d);
             });
-            
+
             Util.start(task);
         }
     }

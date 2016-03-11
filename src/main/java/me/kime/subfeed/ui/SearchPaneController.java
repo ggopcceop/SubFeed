@@ -31,6 +31,8 @@ import java.util.List;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -41,6 +43,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.TitledPane;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 import me.kime.subfeed.DataHolder;
 import me.kime.subfeed.SubHDParser;
 
@@ -71,7 +74,7 @@ public class SearchPaneController implements Initializable {
         String searchText = DataHolder.getSearchText();
         if (!"".equals(searchText)) {
             searchField.setText(searchText);
-            search();
+            new Timeline(new KeyFrame(Duration.millis(1d), ae -> search())).play();
         }
 
     }
@@ -117,14 +120,11 @@ public class SearchPaneController implements Initializable {
 
     public void search() {
         result.getChildren().clear();
-
+        parent.setProgress(-1d);
         String searchText = DataHolder.getSearchText();
         searchField.setText(searchText);
 
-        Task<List<FeedNode>> task = Util.task(() -> {
-            parent.setProgress(-1d);
-            return SubHDParser.parse(searchText);
-        });
+        Task<List<FeedNode>> task = Util.task(() -> SubHDParser.parse(searchText));
 
         task.setOnSucceeded(e -> {
             List<FeedNode> list = (List<FeedNode>) e.getSource().getValue();
