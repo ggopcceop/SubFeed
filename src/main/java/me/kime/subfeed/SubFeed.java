@@ -23,14 +23,9 @@
  */
 package me.kime.subfeed;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.Reader;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLConnection;
-import static java.nio.charset.StandardCharsets.UTF_8;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -42,49 +37,12 @@ import net.sf.sevenzipjbinding.SevenZip;
 import net.sf.sevenzipjbinding.simple.ISimpleInArchive;
 import net.sf.sevenzipjbinding.simple.ISimpleInArchiveItem;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
-import org.json.simple.JSONObject;
-import org.json.simple.JSONValue;
 
 /**
  *
  * @author Kime
  */
 public class SubFeed {
-
-    public static String parseDownLink(String sid) {
-        try {
-            String data = "sub_id=" + sid;
-            byte[] postData = data.getBytes(UTF_8);
-            int postDataLength = postData.length;
-
-            HttpURLConnection conn = (HttpURLConnection) new URL("http://subhd.com/ajax/down_ajax").openConnection();
-            conn.setDoOutput(true);
-            conn.setInstanceFollowRedirects(false);
-            conn.setRequestMethod("POST");
-            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
-            conn.setRequestProperty("charset", "UTF-8");
-            conn.setRequestProperty("Content-Length", Integer.toString(postDataLength));
-            conn.setUseCaches(false);
-            conn.getOutputStream().write(postData);
-
-            StringBuilder textBuilder = new StringBuilder();
-
-            Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
-            int c;
-            while ((c = in.read()) != -1) {
-                textBuilder.append((char) c);
-            }
-
-            JSONObject json = (JSONObject) JSONValue.parse(textBuilder.toString());
-            String downloadURL = (String) json.get("url");
-
-            conn.disconnect();
-            return downloadURL;
-        } catch (IOException ex) {
-            Logger.getLogger(SubFeed.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return "";
-    }
 
     public static List<ISimpleInArchiveItem> downloadSub(String url) {
         LinkedList<ISimpleInArchiveItem> list = new LinkedList<>();
@@ -99,13 +57,13 @@ public class SubFeed {
             conn.setConnectTimeout(5000);
             conn.setReadTimeout(30000);
 
-            ByteArrayStream buffer = new ByteArrayStream(1024 * 1024 * 64);
-            buffer.writeFromInputStream(conn.getInputStream(), true);
-            IInArchive inArchive = SevenZip.openInArchive(null, // autodetect archive type
-                    buffer);
+            IInArchive inArchive;
+            try (ByteArrayStream buffer = new ByteArrayStream(1024 * 1024 * 64)) {
+                buffer.writeFromInputStream(conn.getInputStream(), true);
+                inArchive = SevenZip.openInArchive(null, buffer);
+            }
 
-            System.out.println("Count of items in archive: "
-                    + inArchive.getNumberOfItems());
+            System.out.println("Count of items in archive: " + inArchive.getNumberOfItems());
 
             ISimpleInArchive simpleInArchive = inArchive.getSimpleInterface();
 
