@@ -60,27 +60,17 @@ public class ContextkMenu {
             pw.println("[HKEY_CLASSES_ROOT\\*\\shell\\Subtitle\\command]");
             pw.println("@=\"\\\"" + javaPath + "\\\" -jar \\\"" + appPath + "\\\" \\\"%1\\\"\"");
             pw.close();
-            
+
             //@Anders's workround to display the Windows UAC dialog 
-            File batFile = File.createTempFile("UAC", ".bat");
+            File batFile = File.createTempFile("UAC", ".vbs");
             pw = new PrintWriter(batFile);
-            pw.println("@if (1==1) @if(1==0) @ELSE");
-            pw.println("@echo off&SETLOCAL ENABLEEXTENSIONS");
-            pw.println(">nul 2>&1 \"%SYSTEMROOT%\\system32\\cacls.exe\" \"%SYSTEMROOT%\\system32\\config\\system\"||(");
-            pw.println("    cscript //E:JScript //nologo \"%~f0\"");
-            pw.println("    @goto :EOF");
-            pw.println(")");
-            pw.println("reg import " +  regFile.getAbsolutePath());
-            pw.println("goto :EOF");
-            pw.println("@end @ELSE");
-            pw.println("ShA=new ActiveXObject(\"Shell.Application\")");
-            pw.println("ShA.ShellExecute(\"cmd.exe\",\"/c \\\"\"+WScript.ScriptFullName+\"\\\"\",\"\",\"runas\",5);");
-            pw.println("@end");
+            pw.println("Set UAC = CreateObject(\"Shell.Application\") ");
+            pw.println("UAC.ShellExecute \"reg.exe\", \"import " + regFile.getAbsolutePath() + "\", , \"runas\", 1");
             pw.close();
 
             System.out.println(regFile.getAbsolutePath());
-            
-            ProcessBuilder pb = new ProcessBuilder("cmd", "/c", batFile.getAbsolutePath());
+
+            ProcessBuilder pb = new ProcessBuilder("wscript ", batFile.getAbsolutePath());
             pb.redirectOutput(Redirect.INHERIT);
             pb.redirectError(Redirect.INHERIT);
             pb.start();
@@ -88,8 +78,6 @@ public class ContextkMenu {
             Logger.getLogger(ContextkMenu.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-    
-    
 
     public static void removeRightClickMenu() {
 
