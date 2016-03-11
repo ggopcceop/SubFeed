@@ -50,14 +50,14 @@ import me.kime.subfeed.SubHDParser;
  * @author Kime
  */
 public class SearchPaneController implements Initializable {
-    
+
     @FXML
     private TextField searchField;
     @FXML
     private Button searchButton;
     @FXML
     private VBox result;
-    
+
     private SubWindowController parent;
 
     /**
@@ -73,17 +73,17 @@ public class SearchPaneController implements Initializable {
             searchField.setText(searchText);
             search();
         }
-        
+
     }
-    
+
     @FXML
     private void handleSearchButtonAction(ActionEvent event) {
         System.out.println("You clicked Search!");
-        
+
         DataHolder.setSearchText(searchField.getText());
         search();
     }
-    
+
     private void setupPane(List<FeedNode> list) {
         result.getChildren().clear();
         list.forEach(node -> {
@@ -91,51 +91,53 @@ public class SearchPaneController implements Initializable {
                 FXMLLoader loader = new FXMLLoader(this.getClass().getResource("SearchResult.fxml"));
                 AnchorPane resultPane = loader.load();
                 SearchResultController controller = loader.getController();
-                
+
                 controller.setParentController(parent);
                 controller.setNode(node);
-                
+
                 StringBuilder sb = new StringBuilder();
                 if (!"".equals(node.group)) {
                     sb.append(node.group).append("|");
                 }
                 sb.append(node.title);
-                
+
                 TitledPane t = new TitledPane(sb.toString(), resultPane);
-                
+
                 t.setMinWidth(200d);
-                
+
                 System.out.println("Add TitledPane " + node.title + " to Accordion");
-                
+
                 result.getChildren().add(t);
-                
+
             } catch (IOException ex) {
                 Logger.getLogger(SearchPaneController.class.getName()).log(Level.SEVERE, null, ex);
             }
         });
     }
-    
+
     public void search() {
         result.getChildren().clear();
-        parent.setProgress(-1d);
-        
+
         String searchText = DataHolder.getSearchText();
         searchField.setText(searchText);
-        
-        Task<List<FeedNode>> task = Util.task(() -> SubHDParser.parse(searchText));
-        
+
+        Task<List<FeedNode>> task = Util.task(() -> {
+            parent.setProgress(-1d);
+            return SubHDParser.parse(searchText);
+        });
+
         task.setOnSucceeded(e -> {
             List<FeedNode> list = (List<FeedNode>) e.getSource().getValue();
             setupPane(list);
-            
+
             parent.setProgress(0d);
         });
-        
+
         Util.start(task);
     }
-    
+
     public void setParentController(SubWindowController parent) {
         this.parent = parent;
     }
-    
+
 }
