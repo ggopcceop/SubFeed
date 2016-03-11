@@ -90,11 +90,6 @@ public class SubWindowController implements Initializable {
             FXMLLoader fxmlLoader = new FXMLLoader(getClass().getResource("FilePane.fxml"), ResourceBundle.getBundle("me.kime.subfeed.Bundle"));
             AnchorPane filePane = (AnchorPane) fxmlLoader.load();
 
-            AnchorPane.setTopAnchor(filePane, 0d);
-            AnchorPane.setBottomAnchor(filePane, 0d);
-            AnchorPane.setLeftAnchor(filePane, 0d);
-            AnchorPane.setRightAnchor(filePane, 0d);
-
             filePaneControllerController = (FilePaneController) fxmlLoader.getController();
             filePaneControllerController.setParentController(this);
 

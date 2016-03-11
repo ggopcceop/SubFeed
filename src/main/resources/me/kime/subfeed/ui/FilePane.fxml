@@ -6,18 +6,14 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="700.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.kime.subfeed.ui.FilePaneController">
+<AnchorPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="100.0" minWidth="172.0" prefHeight="700.0" prefWidth="500.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.kime.subfeed.ui.FilePaneController">
    <children>
-      <AnchorPane layoutX="10.0" layoutY="10.0" minWidth="380.0" prefHeight="700.0" prefWidth="380.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+      <HBox maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="23.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
          <children>
-            <HBox layoutX="14.0" layoutY="14.0" prefHeight="23.0" prefWidth="359.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="14.0">
-               <children>
-                  <TextField fx:id="dirField" prefHeight="23.0" prefWidth="396.0" />
-                  <Button fx:id="dirButton" maxWidth="80.0" mnemonicParsing="false" onAction="#handleDirButtonAction" prefHeight="23.0" prefWidth="76.0" text="%key.button.dir" />
-               </children>
-            </HBox>
-            <ListView fx:id="fileListView" layoutX="18.0" layoutY="37.0" prefHeight="631.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="37.0" />
+            <TextField fx:id="dirField" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" prefHeight="23.0" prefWidth="500.0" />
+            <Button fx:id="dirButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#handleDirButtonAction" prefHeight="23.0" prefWidth="80.0" text="%key.button.dir" />
          </children>
-      </AnchorPane>
+      </HBox>
+      <ListView fx:id="fileListView" prefHeight="631.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" AnchorPane.topAnchor="37.0" />
    </children>
 </AnchorPane>
