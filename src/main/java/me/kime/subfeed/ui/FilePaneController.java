@@ -96,9 +96,10 @@ public class FilePaneController implements Initializable {
     @FXML
     private void handleDirButtonAction(ActionEvent event) {
         System.out.println("You clicked Dir!");
-        File Selectedfile = dirChooser.showDialog(dirButton.getScene().getWindow());
+        dirChooser.setInitialDirectory(new File(Preference.getLastUsedDir()));
+        File Selectedfile = dirChooser.showDialog(dirButton.getScene().getWindow());        
+        
         if (Selectedfile != null) {
-            Preference.setLastUsedDir(Selectedfile.toString());
             System.out.println("Selected file: " + Selectedfile.getAbsolutePath());
             browseFile(Selectedfile);
         }
@@ -132,11 +133,10 @@ public class FilePaneController implements Initializable {
     private void browseFile(File file) {
         if (file.isDirectory()) {
             fileList.clear();
-
+            Preference.setLastUsedDir(file.toString());
             for (File f : file.listFiles(f -> {
-                DosFileAttributes attr;
                 try {
-                    attr = Files.readAttributes(f.toPath(), DosFileAttributes.class);
+                    DosFileAttributes attr = Files.readAttributes(f.toPath(), DosFileAttributes.class);
                     return !attr.isHidden() || !attr.isSystem();
                 } catch (IOException ex) {
                     return true;
