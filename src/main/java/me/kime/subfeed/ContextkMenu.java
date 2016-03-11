@@ -61,7 +61,7 @@ public class ContextkMenu {
             pw.println("@=\"\\\"" + javaPath + "\\\" -jar \\\"" + appPath + "\\\" \\\"%1\\\"\"");
             pw.close();
 
-            //@Anders's workround to display the Windows UAC dialog 
+            //VBS script to run UAC Shell Execute
             File batFile = File.createTempFile("UAC", ".vbs");
             pw = new PrintWriter(batFile);
             pw.println("Set UAC = CreateObject(\"Shell.Application\") ");
