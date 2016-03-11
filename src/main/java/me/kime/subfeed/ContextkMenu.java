@@ -84,9 +84,7 @@ public class ContextkMenu {
             pb.redirectOutput(Redirect.INHERIT);
             pb.redirectError(Redirect.INHERIT);
             pb.start();
-        } catch (URISyntaxException ex) {
-            Logger.getLogger(ContextkMenu.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
+        } catch (URISyntaxException | IOException ex) {
             Logger.getLogger(ContextkMenu.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

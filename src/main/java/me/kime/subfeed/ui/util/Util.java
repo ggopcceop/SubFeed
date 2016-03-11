@@ -1,4 +1,4 @@
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Kime.
@@ -21,39 +21,29 @@
  * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
  * THE SOFTWARE.
  */
-package me.kime.subfeed;
+package me.kime.subfeed.ui.util;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import net.sf.sevenzipjbinding.SevenZipException;
-import net.sf.sevenzipjbinding.simple.ISimpleInArchiveItem;
+import java.util.concurrent.Callable;
+import javafx.concurrent.Task;
 
 /**
  *
  * @author Kime
  */
-public class Subtitle {
+public class Util {
 
-    public String mediaName;
-    public String fileName;
-    public ISimpleInArchiveItem item;
+    public static <T> Task<T> task(Callable<T> call) {
+        return new Task<T>() {
+            @Override
+            protected T call() throws Exception {
+                return call.call();
+            }
 
-    public Subtitle(String n, ISimpleInArchiveItem i) {
-        mediaName = n;
-        item = i;
-        
-        try {
-            
-            fileName = i.getPath();
-            int index = fileName.lastIndexOf("\\");
-            fileName = fileName.substring(index+1);
-        } catch (SevenZipException ex) {
-            Logger.getLogger(Subtitle.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        };
     }
 
-    @Override
-    public String toString() {
-        return "<HTML><p>" + fileName + "</p></HTML>";
+    public static Task start(Task task) {
+        new Thread(task).start();
+        return task;
     }
 }

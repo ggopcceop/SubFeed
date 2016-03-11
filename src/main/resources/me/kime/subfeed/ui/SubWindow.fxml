@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.ProgressBar?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.layout.AnchorPane?>
+
+<AnchorPane id="AnchorPane" fx:id="root" minWidth="500.0" prefHeight="720.0" prefWidth="500.0" styleClass="mainFxmlClass" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="me.kime.subfeed.ui.SubWindowController">
+   <children>
+      <TabPane fx:id="tabPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="20.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+        <tabs>
+          <Tab fx:id="fileTab" text="%key.tab.file" />
+          <Tab fx:id="searchTab" text="%key.tab.search" />
+            <Tab fx:id="subtitleTab" text="%key.tab.subtitle" />
+            <Tab fx:id="optionTab" text="%key.tab.option" />
+        </tabs>
+      </TabPane>
+      <ProgressBar fx:id="porgressBar" prefWidth="450.0" progress="0.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="14.0" AnchorPane.rightAnchor="14.0" />
+   </children>
+</AnchorPane>

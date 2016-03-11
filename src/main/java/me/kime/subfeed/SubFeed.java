@@ -24,10 +24,8 @@
 package me.kime.subfeed;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.RandomAccessFile;
 import java.io.Reader;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -39,76 +37,19 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
-import net.sf.sevenzipjbinding.impl.RandomAccessFileOutStream;
 import net.sf.sevenzipjbinding.simple.ISimpleInArchive;
 import net.sf.sevenzipjbinding.simple.ISimpleInArchiveItem;
 import net.sf.sevenzipjbinding.util.ByteArrayStream;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 
 /**
  *
  * @author Kime
  */
 public class SubFeed {
-
-
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
-        if (args.length < 1) {
-            System.out.println("Missing input parameter");
-            return;
-        }
-        try {
-            File mediaFile = new File(args[0]);
-
-            int pos = mediaFile.getName().lastIndexOf(".");
-            String fileName = "";
-            if (pos > 0) {
-                fileName = mediaFile.getName().substring(0, pos);
-
-            }
-            
-            System.out.println(args[0]);
-            System.out.println(mediaFile.getParent());
-            System.out.println(mediaFile.getName());
-
-            Document doc = Jsoup.connect("http://subhd.com/search/" + fileName).get();
-            Element context = doc.select("div.col-md-9").first();
-            Elements entries = context.select("div.box");
-            Element entry = entries.first();
-            String dlLink = parseDownLink(SubHDParser.parseSubId(entry));
-            System.out.println(dlLink);
-            List<ISimpleInArchiveItem> list = downloadSub(dlLink);
-
-            for (ISimpleInArchiveItem item : list) {
-                String newName = parseLanguage(item.getPath(), fileName);
-
-                File file = new File(mediaFile.getParent() + File.separator + newName);
-
-                System.out.println(file.getAbsoluteFile());
-
-                ExtractOperationResult result = item.extractSlow(new RandomAccessFileOutStream(new RandomAccessFile(file, "rw")));
-
-                System.out.println(result.toString());
-            }
-
-
-        } catch (IOException ex) {
-            Logger.getLogger(SubFeed.class.getName()).log(Level.SEVERE, null, ex);
-        }
-    }
-
-    
 
     public static String parseDownLink(String sid) {
         try {
@@ -136,7 +77,7 @@ public class SubFeed {
 
             JSONObject json = (JSONObject) JSONValue.parse(textBuilder.toString());
             String downloadURL = (String) json.get("url");
-            
+
             conn.disconnect();
             return downloadURL;
         } catch (IOException ex) {
@@ -145,8 +86,8 @@ public class SubFeed {
         return "";
     }
 
-    public static List<ISimpleInArchiveItem> downloadSub(String url){
-        LinkedList<ISimpleInArchiveItem> list = new LinkedList<ISimpleInArchiveItem>();
+    public static List<ISimpleInArchiveItem> downloadSub(String url) {
+        LinkedList<ISimpleInArchiveItem> list = new LinkedList<>();
         try {
             URL inFile = new URL(url);
             URLConnection conn = inFile.openConnection();
@@ -176,7 +117,7 @@ public class SubFeed {
 
                 }
             }
-            
+
         } catch (IOException ex) {
             Logger.getLogger(SubFeed.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -184,12 +125,15 @@ public class SubFeed {
     }
 
     public static String parseLanguage(String subName, String mediaName) {
+        if ("".equals(mediaName)) {
+            return subName;
+        }
         String[] indexLang = {"chi", "yue", "eng"};
         String[][] tokens
                 = {{"zh-s", "chs", "简体"},
                 {"zh-t", "cht", "繁体"},
                 {"eng", "英文"}};
-        ArrayList<Node> list = new ArrayList<Node>();
+        ArrayList<Node> list = new ArrayList<>();
         for (int i = 0; i < indexLang.length; i++) {
             int index = indexof(subName, tokens[i]);
             if (index != -1) {
@@ -215,10 +159,9 @@ public class SubFeed {
             sb.append("unk");
             sb.append(".");
         } else {
-            for (Node token : list) {
-                sb.append(token.code);
-                sb.append(".");
-            }
+            list.forEach((token) -> {
+                sb.append(token.code).append(".");
+            });
         }
 
         sb.append(extention);

@@ -23,7 +23,10 @@
  */
 package me.kime.subfeed;
 
+import me.kime.subfeed.ui.util.FeedNode;
 import java.io.IOException;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
@@ -38,11 +41,14 @@ import org.jsoup.select.Elements;
  */
 public class SubHDParser {
 
-    public static void parse(String mediaName) {
+    public static List<FeedNode> parse(String mediaName) {
         Elements entries = SubHDParser.search(mediaName);
         if (entries == null || entries.isEmpty()) {
-            Select1.addItem(new Feed("Not Found", "", "", "", "", ""));
+            LinkedList list = new LinkedList();
+            list.add(new FeedNode("Not Found", "", "", "", "", ""));
+            return list;
         } else {
+            LinkedList list = new LinkedList();
             for (Element entry : entries) {
                 String title = SubHDParser.parseTitle(entry);
                 String sid = SubHDParser.parseSubId(entry);
@@ -51,8 +57,9 @@ public class SubHDParser {
                 String group = SubHDParser.parseGroup(entry);
                 String downloadCount = SubHDParser.parseDownloadCount(entry);
                 System.out.println(title + " " + sid + " " + description + " " + language + " " + group + " " + downloadCount);
-                Select1.addItem(new Feed(title, sid, description, language, group, downloadCount));
+                list.add(new FeedNode(title, sid, description, language, group, downloadCount));
             }
+            return list;
         }
     }
 
