@@ -1,7 +1,7 @@
-image: openjfx:latest
+image: maven:3.3.3
+
+services:
+  - docker-openjfx
 
 build:
   script: "mvn install -B"
-  artifacts:
-    paths:
-    - target/*.jar
