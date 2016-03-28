@@ -1,4 +1,4 @@
-/* 
+/*
  * The MIT License
  *
  * Copyright 2016 Kime.
@@ -23,40 +23,51 @@
  */
 package me.kime.subfeed;
 
+import java.io.File;
+
 /**
  *
  * @author Kime
  */
-public class Feed {
+public class DataHolder {
 
-    public String title;
-    public String sid;
-    public String description;
-    public String language;
-    public String group;
-    public String downloadCount;
+    private static String searchText = "";
+    private static String path = "";
+    private static String mediaName = "";
+    private static String downloadId = "";
 
-    public Feed(String title, String sid, String description, String language, String group, String downloadCount) {
-        this.title = title;
-        this.sid = sid;
-        this.description = description;
-        this.language = language;
-        this.group = group;
-        this.downloadCount = downloadCount;
+    public static void parseString(File file) {
+        int pos = file.getName().lastIndexOf(".");
+        if (pos > 0) {
+            mediaName = file.getName().substring(0, pos);
+            searchText = mediaName;
+        }
+        path = file.getParent();
+        System.out.println(file.getParent());
+        System.out.println(file.getName());
     }
 
-    @Override
-    public String toString() {
-        StringBuilder sb = new StringBuilder();
-        sb.append("<HTML><table width='400px'><tr><td width='300px'><div>");
-        sb.append(title);
-        sb.append("</div></td><td width='100px'><div>");
-        sb.append(group);
-        sb.append("</div></td></tr><tr><td colspan=2><p>");
-        sb.append(description);
-        sb.append("</p></td></tr><tr><td><p>");
-        sb.append(language);
-        sb.append("</p></td></tr></table><br></HTML>");
-        return sb.toString();
+    public static void setSearchText(String text) {
+        searchText = text;
+    }
+
+    public static String getSearchText() {
+        return searchText;
+    }
+
+    public static String getMediaName() {
+        return mediaName;
+    }
+
+    public static String getPath() {
+        return path;
+    }
+
+    public static String getDownloadId() {
+        return downloadId;
+    }
+
+    public static void setDownloadId(String id) {
+        downloadId = id;
     }
 }

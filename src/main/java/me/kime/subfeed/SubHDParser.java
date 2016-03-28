@@ -23,10 +23,21 @@
  */
 package me.kime.subfeed;
 
+import java.io.BufferedReader;
+import me.kime.subfeed.ui.util.FeedNode;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import static java.nio.charset.StandardCharsets.UTF_8;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.commons.lang3.StringUtils;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -38,12 +49,15 @@ import org.jsoup.select.Elements;
  */
 public class SubHDParser {
 
-    public static void parse(String mediaName) {
+    public static List<FeedNode> parse(String mediaName) {
         Elements entries = SubHDParser.search(mediaName);
         if (entries == null || entries.isEmpty()) {
-            Select1.addItem(new Feed("Not Found", "", "", "", "", ""));
+            LinkedList list = new LinkedList();
+            list.add(new FeedNode("Not Found", "", "", "", "", ""));
+            return list;
         } else {
-            for (Element entry : entries) {
+            LinkedList list = new LinkedList();
+            entries.forEach((entry) -> {
                 String title = SubHDParser.parseTitle(entry);
                 String sid = SubHDParser.parseSubId(entry);
                 String description = SubHDParser.parseDescription(entry);
@@ -51,8 +65,9 @@ public class SubHDParser {
                 String group = SubHDParser.parseGroup(entry);
                 String downloadCount = SubHDParser.parseDownloadCount(entry);
                 System.out.println(title + " " + sid + " " + description + " " + language + " " + group + " " + downloadCount);
-                Select1.addItem(new Feed(title, sid, description, language, group, downloadCount));
-            }
+                list.add(new FeedNode(title, sid, description, language, group, downloadCount));
+            });
+            return list;
         }
     }
 
@@ -111,5 +126,40 @@ public class SubHDParser {
         Elements a = e.select("div.pull-left.lb_r > span.label");
 
         return a.text();
+    }
+
+    public static String parseDownLink(String sid) {
+        try {
+            String data = "sub_id=" + sid;
+            byte[] postData = data.getBytes(UTF_8);
+            int postDataLength = postData.length;
+
+            HttpURLConnection conn = (HttpURLConnection) new URL("http://subhd.com/ajax/down_ajax").openConnection();
+            conn.setDoOutput(true);
+            conn.setInstanceFollowRedirects(false);
+            conn.setRequestMethod("POST");
+            conn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+            conn.setRequestProperty("charset", "UTF-8");
+            conn.setRequestProperty("Content-Length", Integer.toString(postDataLength));
+            conn.setUseCaches(false);
+            conn.getOutputStream().write(postData);
+
+            StringBuilder textBuilder = new StringBuilder();
+
+            Reader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+            int c;
+            while ((c = in.read()) != -1) {
+                textBuilder.append((char) c);
+            }
+
+            JSONObject json = (JSONObject) JSONValue.parse(textBuilder.toString());
+            String downloadURL = (String) json.get("url");
+
+            conn.disconnect();
+            return downloadURL;
+        } catch (IOException ex) {
+            Logger.getLogger(SubFeed.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        return "";
     }
 }
