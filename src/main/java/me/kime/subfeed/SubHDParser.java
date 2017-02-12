@@ -89,7 +89,7 @@ public class SubHDParser {
     public static String parseSubId(Element e) {
         Element a = e.select("div.pull-left.lb_r a").first();
         if (a != null) {
-            return a.attr("href").substring(3);
+            return a.attr("href").substring(4);
         }
         return "";
     }
